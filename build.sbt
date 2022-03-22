@@ -11,7 +11,7 @@ import Dependencies._
 libraryDependencies ++= Seq(
   Cats.Effect,
   Cats.Core,
-  ScalaTest
+  MUnit
 )
 
 lazy val root = (project in file("."))
