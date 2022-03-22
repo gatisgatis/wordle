@@ -1,5 +1,5 @@
 package gatis.scaladev.engine
 
-object Main {
-
+object Main extends App {
+ println("test")
 }
