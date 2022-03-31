@@ -6,6 +6,8 @@ import munit.FunSuite
 
 class EngineSpec extends FunSuite {
 
+  // ASK. Kā būt drošam, ka testi nosedz visu?
+
   test("check if testing works fine (fake test)") {
     val output = true
     assertEquals(output, true)
@@ -62,6 +64,7 @@ class EngineSpec extends FunSuite {
     assert(guessInvalidAnswer.isLeft)
   }
 
+  // TODO. More keyboard tests
   test("creates keyboard") {
     // input - "zebra", input2 - "abear", answer - "rumba"
     val expectedKeyboard: List[Letter] = List(
@@ -93,6 +96,10 @@ class EngineSpec extends FunSuite {
     assert(finished.guesses.size == 2)
 
   }
+
+  // TODO plays game and looses
+  // TODO plays game with error inputs
+  //
 }
 
 

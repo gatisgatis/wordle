@@ -9,7 +9,7 @@ import gatis.scaladev.engine.{GameRound, Lost, Won}
 object Processor {
   def process[F[_] : Monad](console: Console[F], gameRound: GameRound, message: String = ""): F[Unit] = {
 
-    def winningMessage(count: Int) = s"Congrats. You WON using only $count guesses!"
+    def winningMessage(count: Int) = s"Congrats. You WON using $count guesses!"
     def loosingMessage(answer: String) = s"Meh. You LOST. The answer is '${answer.toUpperCase}'!"
 
 
@@ -20,6 +20,7 @@ object Processor {
       _ <- console.putStrLn(msg + "\n")
       _ <- console.putStrLn(gameRound.toFancyString)
       input <- console.readStrLn
+      _ <- console.putStrLn("*"*40)
       _ <- gameRound.playTurn(input) match {
         case Right(gr) =>
           if (gr.status == Won) console.putStrLn(gr.toFancyString) *> console.putStrLn(winningMessage(gr.guesses.size))

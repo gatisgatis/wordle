@@ -4,6 +4,7 @@ import gatis.scaladev.engine.{GameRound, Guess, Letter}
 import io.circe.Encoder
 import io.circe.syntax.EncoderOps
 
+// Not used for cli app
 object Codecs {
 
   implicit val letterE: Encoder[Letter] =
