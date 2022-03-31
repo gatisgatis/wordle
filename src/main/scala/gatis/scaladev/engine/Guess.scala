@@ -5,7 +5,7 @@ import gatis.scaladev.engine.Utils.{AllWords, validateWord, ErrorMsg}
 final case class Guess(value: List[Letter])
 
 object Guess {
-  val empty: Guess = Guess(Nil)
+  val empty: Guess = Guess(value = List(White(" "), White(" "), White(" "), White(" "), White(" ")))
 
   def fromString(input: String, answer: String)(allWords: AllWords): Either[ErrorMsg, Guess] = {
     for {

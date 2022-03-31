@@ -11,7 +11,9 @@ import Dependencies._
 libraryDependencies ++= Seq(
   Cats.Effect,
   Cats.Core,
-  MUnit
+  MUnit,
+  Circe.Generic,
+  Circe.GenericExtras
 )
 
 lazy val root = (project in file("."))

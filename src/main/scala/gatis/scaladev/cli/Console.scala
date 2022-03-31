@@ -1,7 +1,6 @@
-package gatis.scaladev.cliapp
+package gatis.scaladev.cli
 
 import cats.effect.Sync
-
 import scala.io.StdIn
 
 trait Console[F[_]] {
