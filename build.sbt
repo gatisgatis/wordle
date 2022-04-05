@@ -17,6 +17,16 @@ libraryDependencies ++= Seq(
 )
 
 lazy val root = (project in file("."))
-  .settings(
-    name := "wordle-engine"
-  )
+  .settings(name := "wordle-engine")
+  .settings(testCoverageReport)
+
+val testCoverageReport = addCommandAlias(
+  "test-coverage-report",
+  """
+    | coverage;
+    | test;
+    | coverageReport;
+    | coverageAggregate;
+    | coverageOff;
+    | """.stripMargin,
+)

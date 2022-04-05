@@ -7,13 +7,13 @@ final case class Guess(value: List[Letter])
 object Guess {
   val empty: Guess = Guess(value = List(White(" "), White(" "), White(" "), White(" "), White(" ")))
 
-  def fromString(input: String, answer: String)(allWords: AllWords): Either[ErrorMsg, Guess] = {
+  def fromString(input: String, answer: String)(implicit allWords: AllWords): Either[ErrorMsg, Guess] = {
     for {
       validatedInput <- validateWord(input.toLowerCase)(allWords)
       validatedAnswer <- validateWord(answer.toLowerCase)(allWords)
       answerSymbols: Array[String] = validatedAnswer.split("")
-      tempResult: List[Letter] = validatedInput
-        .split("")
+      inputSymbols: Array[String] = validatedInput.split("")
+      tempResult: List[Letter] = inputSymbols
         .zipWithIndex
         .map {
           case (symbol, index) =>
@@ -23,7 +23,9 @@ object Guess {
         }.toList
       result: List[Letter] = tempResult.map {
         case Yellow(symbol) =>
-          if (tempResult.contains(Green(symbol))) Grey(symbol)
+          val thisSymbolInInputCount = inputSymbols.count(_ == symbol)
+          val thisSymbolInAnswerCount = answerSymbols.count(_ == symbol)
+          if (tempResult.contains(Green(symbol)) && thisSymbolInAnswerCount < thisSymbolInInputCount) Grey(symbol)
           else Yellow(symbol)
         case notYellow => notYellow
       }

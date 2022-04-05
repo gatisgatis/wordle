@@ -1,12 +1,11 @@
 package gatis.scaladev.engine
 
-import gatis.scaladev.engine.Constants.allWords
-import gatis.scaladev.engine.Utils.{getDataFromTxt, validateWord}
+import gatis.scaladev.engine.Utils.{AllWords, Answers, getDataFromTxt, validateWord}
 import munit.FunSuite
 
 class EngineSpec extends FunSuite {
 
-  // ASK. Kā būt drošam, ka testi nosedz visu?
+  implicit val allWords: AllWords = AllWords(getDataFromTxt("all_words.txt"))
 
   test("check if testing works fine (fake test)") {
     val output = true
@@ -33,19 +32,19 @@ class EngineSpec extends FunSuite {
     // should be exactly 5 letters
     // should be in all words list
     val tooLongWord = "zebraa"
-    assert(validateWord(tooLongWord)(allWords).isLeft)
+    assert(validateWord(tooLongWord).isLeft)
     val tooShortWord = "z"
-    assert(validateWord(tooShortWord)(allWords).isLeft)
+    assert(validateWord(tooShortWord).isLeft)
     val fiveLetterWordNotInList = "zebrr"
-    assert(validateWord(fiveLetterWordNotInList)(allWords).isLeft)
+    assert(validateWord(fiveLetterWordNotInList).isLeft)
     val legitWord = "zebra"
-    assertEquals(validateWord(legitWord)(allWords), Right("zebra"))
+    assertEquals(validateWord(legitWord), Right("zebra"))
   }
 
   test("constructs guess (standard case)") {
     // input - "zebra", answer - "rumba"
     val expectedGuess: Guess = Guess(List(Grey("z"), Grey("e"), Yellow("b"), Yellow("r"), Green("a")))
-    val result = Guess.fromString(input = "zebra", answer = "rumba")(allWords)
+    val result = Guess.fromString(input = "zebra", answer = "rumba")
     assertEquals(expectedGuess, result.getOrElse(Guess.empty))
   }
 
@@ -53,13 +52,13 @@ class EngineSpec extends FunSuite {
     // should not show yellow if green is found
     // input - "anima", answer - "rumba"
     val expectedGuess: Guess = Guess(List(Grey("a"), Grey("n"), Grey("i"), Yellow("m"), Green("a")))
-    val result = Guess.fromString(input = "anima", answer = "rumba")(allWords)
+    val result = Guess.fromString(input = "anima", answer = "rumba")
     assertEquals(expectedGuess, result.getOrElse(Guess.empty))
   }
 
   test("provides error msg if constructing guess with invalid input") {
-    val guessInvalidInput = Guess.fromString(input = "sdas", answer = "rumba")(allWords)
-    val guessInvalidAnswer = Guess.fromString(input = "zebra", answer = "sdaf")(allWords)
+    val guessInvalidInput = Guess.fromString(input = "sdas", answer = "rumba")
+    val guessInvalidAnswer = Guess.fromString(input = "zebra", answer = "sdaf")
     assert(guessInvalidInput.isLeft)
     assert(guessInvalidAnswer.isLeft)
   }
@@ -75,17 +74,17 @@ class EngineSpec extends FunSuite {
       White("u"), White("v"), White("w"), White("x"), White("y"),
       Grey("z"))
     val gameRound = GameRound(List(
-      Guess.fromString("zebra", "rumba")(allWords).getOrElse(Guess.empty),
-      Guess.fromString("abear", "rumba")(allWords).getOrElse(Guess.empty)
-    ), InProgress, Right("rumba"), allWords)
-    val result = gameRound.keyboard
+      Guess.fromString("zebra", "rumba").getOrElse(Guess.empty),
+      Guess.fromString("abear", "rumba").getOrElse(Guess.empty)
+    ), InProgress, Right("rumba"))
+    val result = gameRound.updateKeyboard
 
     assertEquals(expectedKeyboard, result)
   }
 
-  test("plays full game for known answer") {
+  test("plays game and wins") {
 
-    val initialGameRound = GameRound(Nil, InProgress, Right("super"), allWords)
+    val initialGameRound = GameRound(Nil, InProgress, Right("super"))
 
     val finished = (for {
       gr1 <- initialGameRound.playTurn("suing")
@@ -94,6 +93,21 @@ class EngineSpec extends FunSuite {
 
     assert(finished.status == Won)
     assert(finished.guesses.size == 2)
+
+  }
+
+  test("creates correct guess if same symbol in green and yellow position") {
+
+    val initialGameRound = GameRound(Nil, InProgress, Right("adapt"))
+
+    val finished = (for {
+      gr1 <- initialGameRound.playTurn("suing")
+      gr2 <- gr1.playTurn("agora")
+    } yield gr2).getOrElse(initialGameRound)
+
+    assert(finished.status == InProgress)
+    assert(finished.guesses.size == 2)
+    assertEquals(finished.guesses(1), Guess(List(Green("a"), Grey("g"), Grey("o"), Grey("r"), Yellow("a"))))
 
   }
 

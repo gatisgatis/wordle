@@ -23,9 +23,9 @@ object Instances {
     val restOfBoard = emptyBoard.slice(0, 6 - gr.guesses.size)
     val restOfBoardString = restOfBoard.foldLeft("")((result, g) => result + g.toFancyString + "\n\n")
 
-    val k1 = gr.keyboard.slice(0, 9)
-    val k2 = gr.keyboard.slice(9, 18)
-    val k3 = gr.keyboard.slice(18, gr.keyboard.size)
+    val k1 = gr.updateKeyboard.slice(0, 9)
+    val k2 = gr.updateKeyboard.slice(9, 18)
+    val k3 = gr.updateKeyboard.slice(18, gr.updateKeyboard.size)
     val keyboardString = k1.foldLeft("")((result, l) => result + " " + l.toFancyString) + "\n\n" +
       k2.foldLeft("")((result, l) => result + " " + l.toFancyString) +
       "\n\n" + k3.foldLeft("")((result, l) => result + " " + l.toFancyString) + "\n"

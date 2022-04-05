@@ -1,7 +1,7 @@
 package gatis.scaladev.engine
 
 import scala.io.Source
-import scala.util.{Random, Try, Using}
+import scala.util.{Failure, Random, Success, Try, Using}
 
 object Utils {
 
@@ -15,7 +15,7 @@ object Utils {
 
   final case class AllWords(value: List[String]) extends AnyVal
 
-  def validateWord(word: String)(allWords: AllWords): Either[ErrorMsg, String] = {
+  def validateWord(word: String)(implicit allWords: AllWords): Either[ErrorMsg, String] = {
     if (word.length != 5) Left(ErrorMsg("Provided word is not a 5 letter word"))
     else if (allWords.value.contains(word)) Right(word)
     else Left(ErrorMsg("Provided word is not in the legitimate word list"))
@@ -23,6 +23,10 @@ object Utils {
 
   def selectAnswer(answers: Answers): Either[ErrorMsg, String] = {
     val random = new Random
-    Try(Right(answers.value(random.nextInt(answers.value.length)))).getOrElse(Left(ErrorMsg("Error selecting answer")))
+    Try(random.nextInt(answers.value.length)).map(rnd => answers.value(rnd)).toEither match {
+      case Left(_) => Left(ErrorMsg("Error selecting answer"))
+      case Right(x) => Right(x)
+    }
+
   }
 }
